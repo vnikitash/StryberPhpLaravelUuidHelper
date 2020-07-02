@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Stryber\Uuid;
 
 use Closure;
@@ -8,7 +10,7 @@ use Illuminate\Http\Response;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\HttpFoundation\HeaderBag;
 
-class SetRequestId
+final class SetRequestId
 {
     public const REQUEST_ID_HEADER = 'X-Request-ID';
 
