@@ -9,10 +9,6 @@ use Illuminate\Support\ServiceProvider;
 
 final class UuidServiceProvider extends ServiceProvider
 {
-    private $middlewares = [
-        'requestId' => SetRequestId::class,
-    ];
-
     public function register(): void
     {
         $this->registerClasses();
@@ -21,7 +17,9 @@ final class UuidServiceProvider extends ServiceProvider
 
     private function registerClasses(): void
     {
-        $this->app->bind(UuidGenerator::class, PersistentUuidGenerator::class);
+        $this->app->when(SetRequestId::class)
+            ->needs(UuidGenerator::class)
+            ->give(PersistentUuidGenerator::class);
         $this->app->singleton(PersistentUuidGenerator::class, fn() => PersistentUuidGenerator::instance());
     }
 
@@ -29,6 +27,6 @@ final class UuidServiceProvider extends ServiceProvider
     {
         /** @var Router $router */
         $router = $this->app['router'];
-        collect($this->middlewares)->each(fn($middleware, $alias) => $router->aliasMiddleware($alias, $middleware));
+        $router->aliasMiddleware('requestId', SetRequestId::class);
     }
 }
